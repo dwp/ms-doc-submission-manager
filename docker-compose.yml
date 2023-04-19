@@ -1,0 +1,139 @@
+version: "2.1"
+services:
+  localstack:
+    image: ${LOCALSTACK_IMAGE}
+    environment:
+      SERVICES: s3, sns, sqs, kms
+      HOSTNAME_EXTERNAL: localstack
+    volumes:
+      - ./config/localstack:/docker-entrypoint-initaws.d
+    healthcheck:
+      test: [ "CMD", "curl", "http://localhost:4566" ]
+    ports:
+      - "4566:4566"
+    logging:
+      driver: none
+
+  mongodb:
+    container_name: mongodb
+    image: mongo:${mongodb_fha_version:-5.0}
+    environment:
+      - storage.wiredTiger.engineConfig.cacheSizeGB=5
+    command: mongod --port 27017
+    expose:
+      - 27017
+    ports:
+      - '27017:27017'
+    logging:
+      driver: none
+
+  wm-ms-clamav-s3-file-submission:
+    image: '${MOCK_IMAGE}'
+    container_name: wm-ms-clamav-s3-file-submission
+    expose:
+      - 8080
+    ports:
+      - "9935:8080"
+    command: --global-response-templating --verbose
+    logging:
+      driver: none
+
+  wm-ms-documents:
+    image: '${MOCK_IMAGE}'
+    container_name: wm-ms-documents
+    expose:
+      - 8080
+    ports:
+      - "8900:8080"
+      - "5011:5009"
+    command: --global-response-templating --verbose
+    logging:
+      driver: none
+
+  wm-ms-true-mock-drs:
+    image: '${MOCK_IMAGE}'
+    container_name: wm-ms-true-mock-drs
+    expose:
+      - 8080
+    ports:
+      - "8950:8080"
+      - "5010:5010"
+    command: --global-response-templating --verbose
+    logging:
+      driver: none
+
+  ms-doc-submission-manager:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9945:8080"
+    depends_on:
+      localstack:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+      - AWS_S3_AWS_REGION=us-east-1
+      - AWS_S3_ENDPOINT_OVERRIDE=http://localstack:4566
+      - AWS_S3_BUCKET=pip-bucket
+      - AWS_S3_ENCRYPT_ENABLE=true
+      - AWS_ENCRYPTION_KMS_OVERRIDE=http://localstack:4566
+      - AWS_ENCRYPTION_MESSAGE_DATA_KEY_ID=awssecretkey
+      - AWS_ENCRYPTION_MONGO_DATA_KEY_ID=awssecrekey
+      - DRS_CALLER_ID=pip-online
+      - DRS_EVENT_INCOMING_ROUTING_KEY=pip.batch.response
+      - DRS_EVENT_OUTBOUND_BATCH_UPLOAD_QUEUE=docbatch-batch-upload
+      - DRS_EVENT_QUEUE_NAME=docbatch-batch-response
+      - FEATURE_MONGO_STABLE_API_ENABLED=true
+      - FEATURE_DATA_CHANGESTREAM_ENABLED=true
+      - FEATURE_CHANGESTREAM_DECRYPTION_ENABLED=false
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_COLLECTION=document
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_ROUTING_KEY=pip.docsub.mgr.stream
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_DATABASE=pip-apply-application-submission-mgr
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_SKIP_DECRYPTION=true
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[1]_COLLECTION=submission
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[1]_ROUTING_KEY=pip.docsub.mgr.stream
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[1]_DATABASE=pip-apply-application-submission-mgr
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[1]_SKIP_DECRYPTION=true
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[2]_COLLECTION=drs_upload
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[2]_ROUTING_KEY=pip.docsub.mgr.stream
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[2]_DATABASE=pip-apply-application-submission-mgr
+      - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[2]_SKIP_DECRYPTION=true
+      - UK_GOV_DWP_HEALTH_INTEGRATION_OUTBOUND_TOPIC_EXCHANGE=pip-docsub-analytics
+      - UK_GOV_DWP_HEALTH_INTEGRATION_SNS_ENDPOINT_OVERRIDE=http://localstack:4566
+      - UK_GOV_DWP_HEALTH_INTEGRATION_SQS_ENDPOINT_OVERRIDE=http://localstack:4566
+      - UK_GOV_DWP_HEALTH_INTEGRATION_AWS_REGION=us_east_1
+      - UK_GOV_DWP_HEALTH_INTEGRATION_MESSAGE_TYPE=aws
+      - UK_GOV_DWP_HEALTH_INTEGRATION_ENABLED=true
+      - AWS_ACCESS_KEY_ID=awsaccesskey
+      - AWS_SECRET_ACCESS_KEY=its-a-secret
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - SPRING_DATA_MONGODB_PORT=27017
+      - DRS_UNITS_GB_CALLER_ID=pip-online
+      - DRS_UNITS_NI_CALLER_ID=pip-online-ni
+      - DRS_MAX_DISK_SIZE_KB_PER_BATCH=100000
+      - DRS_MAX_NUMBER_FILE_PER_BATCH=99
+      - LOGGER_LEVEL_UK_GOV_DWP_HEALTH_MONGO_CHANGESTREAM_CONFIG=WARN
+
+  api-test:
+    container_name: api-test
+    image: '${MAVEN_IMAGE}'
+    entrypoint: /bin/bash -c
+    command:
+      - |
+        until [ `curl -s -o /dev/null -w "%{http_code}" http://ms-doc-submission-manager:8080/actuator/health` = "200" ]; do echo "service not available, sleeping 10."; sleep 10; done
+        sleep 30
+        mvn ${MVN_OPTS} verify -Papi-component-tests
+    working_dir: /usr/src
+    environment:
+      HOST: http://ms-doc-submission-manager
+      PORT: 8080
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+    volumes:
+      - .:/usr/src
+      - ${MVN_M2}:/root/.m2
+      - ${MVN_SETTINGS_FILE_SAAS}:/root/.m2/settings.xml
+      - ./target/test/reports:/usr/src/target/test-reports

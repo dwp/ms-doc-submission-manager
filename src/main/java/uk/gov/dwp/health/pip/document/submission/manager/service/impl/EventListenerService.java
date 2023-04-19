@@ -1,0 +1,75 @@
+package uk.gov.dwp.health.pip.document.submission.manager.service.impl;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Service;
+import uk.gov.dwp.health.integration.message.consumers.HealthMessageConsumer;
+import uk.gov.dwp.health.pip.document.submission.manager.config.properties.EventConfigProperties;
+import uk.gov.dwp.health.pip.document.submission.manager.entity.DrsUpload;
+import uk.gov.dwp.health.pip.document.submission.manager.event.response.DrsUploadResponse;
+import uk.gov.dwp.health.pip.document.submission.manager.model.DrsStatusEnum;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+public class EventListenerService implements HealthMessageConsumer<Map<String, Object>> {
+
+  private static Logger log = LoggerFactory.getLogger(EventListenerService.class);
+
+  private final EventConfigProperties configProperties;
+  private final DataServiceImpl dataService;
+  private final ObjectMapper objectMapper;
+
+  @Override
+  public String getQueueName() {
+    return configProperties.getQueueName();
+  }
+
+  @Override
+  public String getRoutingKey() {
+    return configProperties.getIncomingRoutingKey();
+  }
+
+  @Override
+  public void handleMessage(MessageHeaders messageHeaders, final Map<String, Object> payload) {
+    final DrsUploadResponse drsUploadResponse =
+        objectMapper.convertValue(payload, DrsUploadResponse.class);
+    DrsUpload drsRequest = findDrsRequestAudit(drsUploadResponse.getRequestId());
+    if (drsRequest == null) {
+      log.warn(
+          "Request ID {} did not find corresponding submission", drsUploadResponse.getRequestId());
+    } else {
+      updateDrsRequestAudit(drsUploadResponse, drsRequest);
+    }
+  }
+
+  private DrsUpload findDrsRequestAudit(String requestId) {
+    return dataService.findDrsRequestByRequestId(requestId);
+  }
+
+  private void updateDrsRequestAudit(DrsUploadResponse response, DrsUpload drsRequest) {
+    drsRequest.setStatus(
+        response.isSuccess() ? DrsStatusEnum.SUCCESS.status : DrsStatusEnum.FAIL.status);
+    if (!response.isSuccess()) {
+      drsRequest.setErrors(response.getErrorMessage());
+      Optional.ofNullable(response.getAdditionalErrorDetails())
+          .ifPresent(
+              d -> {
+                try {
+                  drsRequest.setAdditionalErrorDetails(objectMapper.writeValueAsString(d));
+                } catch (JsonProcessingException e) {
+                  log.error("Fail to marshal additional error to JSON string");
+                }
+              });
+    }
+    drsRequest.setCompletedAt(LocalDateTime.now());
+    dataService.createUpdateDrsRequestAudit(drsRequest);
+  }
+}

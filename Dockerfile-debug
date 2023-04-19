@@ -1,0 +1,4 @@
+FROM gcr.io/distroless/java:11
+COPY target/ms-documentId-submission-manager-*.jar /app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8000", "-jar", "/app.jar"]
