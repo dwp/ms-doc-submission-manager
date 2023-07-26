@@ -1,6 +1,8 @@
 app_name: @project.artifactId@
 app_version: @project.version@
 
+---
+
 spring:
   main:
     banner-mode: 'off'

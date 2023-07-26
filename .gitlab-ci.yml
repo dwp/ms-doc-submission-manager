@@ -11,6 +11,7 @@ variables:
   PIP_APPLY_MOCKS_NAME: pip-apply-mocks
   MOCK_IMAGE: "develop"
   GITHUB_REPO_NAME: ms-doc-submission-manager
+  CI_PROJECT_NAME: ms-doc-submission-manager
 
 stages:
   - update-version
@@ -24,8 +25,12 @@ stages:
   - image-push
   - update-project-metadata
   - create-schedules
-  - repo-gen
   - open-source
+  - update-changelog
+  - release-mr-main
+  - release-tag
+  - release-update-version
+  - release-mr-develop
 
 include:
   - local: "/gitlab-ci/includes.yml"

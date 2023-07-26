@@ -12,6 +12,7 @@ import uk.gov.dwp.health.pip.document.submission.manager.config.properties.Event
 import uk.gov.dwp.health.pip.document.submission.manager.entity.DrsUpload;
 import uk.gov.dwp.health.pip.document.submission.manager.event.response.DrsUploadResponse;
 import uk.gov.dwp.health.pip.document.submission.manager.model.DrsStatusEnum;
+import uk.gov.dwp.health.pip.document.submission.manager.service.CloudWatchMetricsService;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -26,6 +27,7 @@ public class EventListenerService implements HealthMessageConsumer<Map<String, O
   private final EventConfigProperties configProperties;
   private final DataServiceImpl dataService;
   private final ObjectMapper objectMapper;
+  private final CloudWatchMetricsService cloudWatchMetricsService;
 
   @Override
   public String getQueueName() {
@@ -68,6 +70,11 @@ public class EventListenerService implements HealthMessageConsumer<Map<String, O
                   log.error("Fail to marshal additional error to JSON string");
                 }
               });
+      log.error(
+          "Unsuccessful Doc Batch request {} - error details are in mongo in drs_upload",
+          response.getRequestId()
+      );
+      cloudWatchMetricsService.incrementSubmissionFailureMetric();
     }
     drsRequest.setCompletedAt(LocalDateTime.now());
     dataService.createUpdateDrsRequestAudit(drsRequest);

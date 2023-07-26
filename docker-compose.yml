@@ -3,7 +3,7 @@ services:
   localstack:
     image: ${LOCALSTACK_IMAGE}
     environment:
-      SERVICES: s3, sns, sqs, kms
+      SERVICES: s3, sns, sqs, kms, cloudwatch
       HOSTNAME_EXTERNAL: localstack
     volumes:
       - ./config/localstack:/docker-entrypoint-initaws.d
@@ -19,7 +19,7 @@ services:
     image: mongo:${mongodb_fha_version:-5.0}
     environment:
       - storage.wiredTiger.engineConfig.cacheSizeGB=5
-    command: mongod --port 27017
+    command: mongod --port 27017 --quiet
     expose:
       - 27017
     ports:
@@ -68,6 +68,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9945:8080"
+      - "5005:5005"
     depends_on:
       localstack:
         condition: service_healthy
@@ -87,7 +88,7 @@ services:
       - DRS_EVENT_OUTBOUND_BATCH_UPLOAD_QUEUE=docbatch-batch-upload
       - DRS_EVENT_QUEUE_NAME=docbatch-batch-response
       - FEATURE_MONGO_STABLE_API_ENABLED=true
-      - FEATURE_DATA_CHANGESTREAM_ENABLED=true
+      - FEATURE_DATA_CHANGESTREAM_ENABLED=false
       - FEATURE_CHANGESTREAM_DECRYPTION_ENABLED=false
       - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_COLLECTION=document
       - UK_GOV_DWP_HEALTH_CHANGESTREAM_CHANNELS[0]_ROUTING_KEY=pip.docsub.mgr.stream
@@ -115,7 +116,21 @@ services:
       - DRS_UNITS_NI_CALLER_ID=pip-online-ni
       - DRS_MAX_DISK_SIZE_KB_PER_BATCH=100000
       - DRS_MAX_NUMBER_FILE_PER_BATCH=99
-      - LOGGER_LEVEL_UK_GOV_DWP_HEALTH_MONGO_CHANGESTREAM_CONFIG=WARN
+      - AWS_CLOUD_WATCH_AWS-REGION=us-east-1
+      - AWS_CLOUD_WATCH_NAMESPACE=test
+      - AWS_CLOUD_WATCH_METRIC-PRODUCT=pip-apply
+      - AWS_CLOUD_WATCH_METRIC-ENVIRONMENT=local
+      - AWS_CLOUD_WATCH_METRIC-ENV-ID=component-test
+      - AWS_CLOUD_WATCH_ENDPOINT_OVERRIDE=http://localstack:4566
+      - AWS_CLOUD_WATCH_CREDENTIALS_ACCESS-KEY=awsaccesskey
+      - AWS_CLOUD_WATCH_CREDENTIALS_SECRET-KEY=its-a-secret
+      - LOGGING_LEVEL_UK_GOV_DWP_HEALTH_MONGO_CHANGESTREAM_CONFIG=INFO
+      - LOGGING_LEVEL_ORG_MONGODB_DRIVER=WARN
+    entrypoint:
+      - java
+      - -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      - -jar
+      - /app.jar
 
   api-test:
     container_name: api-test
@@ -128,6 +143,9 @@ services:
         mvn ${MVN_OPTS} verify -Papi-component-tests
     working_dir: /usr/src
     environment:
+      AWS_ACCESS_KEY: awsaccesskey
+      AWS_SECRET_KEY: its-a-secret
+      AWS_SERVICE_HOSTNAME: localstack
       HOST: http://ms-doc-submission-manager
       PORT: 8080
       MONGODB_HOST: mongodb

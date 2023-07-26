@@ -5,12 +5,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.11</version>
+    <version>2.7.13</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-document-submission-manager</artifactId>
-  <version>2.1.0</version>
+  <version>2.1.1</version>
   <name>ms-document-submission-manager</name>
   <description>Micro service support claim submission</description>
 
@@ -22,15 +22,16 @@
     <spring-framework.version>5.3.27</spring-framework.version>
     <dwp.encoded.log.version>2.2.3-112b45f6</dwp.encoded.log.version>
     <dwp.message-broker.version>2.9.0-a2cbc08c</dwp.message-broker.version>
-    <dwp-meta-data-logger.version>1.1.0-52bdbe9f</dwp-meta-data-logger.version>
+    <dwp-meta-data-logger.version>2.0.0-56b86a2e</dwp-meta-data-logger.version>
     <dwp-mongo-change-stream-starter.version>3.2.0-dd59aa6b</dwp-mongo-change-stream-starter.version>
     <aws.s3.version>2.20.26</aws.s3.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
+    <amazon.sdk.version>1.12.432</amazon.sdk.version>
     <lidalia.version>1.2.0</lidalia.version>
     <maven.compiler.version>3.8.1</maven.compiler.version>
     <jacoco.version>0.8.5</jacoco.version>
-    <owasp.version>7.4.4</owasp.version>
+    <owasp.version>8.3.1</owasp.version>
     <plugin.maven-openapi-generator.version>5.2.1</plugin.maven-openapi-generator.version>
     <plugin.spotbugs.version>4.2.2</plugin.spotbugs.version>
     <plugin.projectinfo.version>3.1.1</plugin.projectinfo.version>
@@ -130,6 +131,11 @@
       <groupId>io.springfox</groupId>
       <artifactId>springfox-swagger2</artifactId>
       <version>${springfox-swagger2.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-cloudwatch</artifactId>
+      <version>${amazon.sdk.version}</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

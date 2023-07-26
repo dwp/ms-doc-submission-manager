@@ -19,6 +19,7 @@ import uk.gov.dwp.health.pip.document.submission.manager.config.properties.Event
 import uk.gov.dwp.health.pip.document.submission.manager.entity.DrsUpload;
 import uk.gov.dwp.health.pip.document.submission.manager.event.response.DrsUploadResponse;
 import uk.gov.dwp.health.pip.document.submission.manager.event.response.Error;
+import uk.gov.dwp.health.pip.document.submission.manager.service.CloudWatchMetricsService;
 import uk.org.lidalia.slf4jext.Level;
 import uk.org.lidalia.slf4jtest.LoggingEvent;
 import uk.org.lidalia.slf4jtest.TestLogger;
@@ -47,6 +48,7 @@ class EventListenerServiceTest {
   @Mock private EventConfigProperties props;
   @Mock private DataServiceImpl dataService;
   @Mock private ObjectMapper objectMapper;
+  @Mock private CloudWatchMetricsService cloudWatchMetricsService;
 
   @BeforeAll
   static void setupSpec() {
@@ -155,11 +157,13 @@ class EventListenerServiceTest {
       assertThat(requestAudit.getErrors()).isEqualTo("DRS FAIL REJECTED UPLOAD");
       assertThat(requestAudit.getAdditionalErrorDetails()).isNull();
 
-      assertThat(mockLogger.getLoggingEvents())
+      assertThat(mockLogger.getLoggingEvents()).isNotNull();
+      assertThat(mockLogger.getLoggingEvents().size())
+          .isEqualTo(2);
+      assertThat(mockLogger.getLoggingEvents().get(0))
           .isEqualTo(
-              Collections.singletonList(
                   new LoggingEvent(
-                      Level.ERROR, "Fail to marshal additional error to JSON string")));
+                      Level.ERROR, "Fail to marshal additional error to JSON string"));
     }
 
     @Test

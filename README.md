@@ -49,6 +49,14 @@ The version 1 API spec can be found at [openapi-spec-v1.yaml](api-spec/openapi-s
 
 ```
 
+## Message listener
+
+Listens to a doc batch response queue (see
+uk.gov.dwp.health.pip.document.submission.manager.config.properties.EventConfigProperties.queueName)
+and updates our DRS request entity in mongo with the result. For failures,
+a Cloudwatch metric is incremented on failure, see
+uk.gov.dwp.health.pip.document.submission.manager.config.properties.CloudWatchProperties.submissionFailureMetricName
+
 ## To build and run
 
 ```bash
