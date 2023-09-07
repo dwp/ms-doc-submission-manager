@@ -83,6 +83,11 @@ api-test:
     when: always
     expose_as: 'Document Submission manager API Component Test Report'
 
+trivy-container:
+  extends: .trivy-container-base
+  variables:
+    HIGH_SUPPRESSIONS: "CVE-2023-21930"
+
 ### DEFAULT RUNNER ###
 default:
   tags:

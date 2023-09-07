@@ -10,7 +10,7 @@
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-document-submission-manager</artifactId>
-  <version>2.1.1</version>
+  <version>2.1.2</version>
   <name>ms-document-submission-manager</name>
   <description>Micro service support claim submission</description>
 
@@ -24,12 +24,14 @@
     <dwp.message-broker.version>2.9.0-a2cbc08c</dwp.message-broker.version>
     <dwp-meta-data-logger.version>2.0.0-56b86a2e</dwp-meta-data-logger.version>
     <dwp-mongo-change-stream-starter.version>3.2.0-dd59aa6b</dwp-mongo-change-stream-starter.version>
+    <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
     <aws.s3.version>2.20.26</aws.s3.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
     <amazon.sdk.version>1.12.432</amazon.sdk.version>
     <lidalia.version>1.2.0</lidalia.version>
     <maven.compiler.version>3.8.1</maven.compiler.version>
+    <maven-checkstyle-plugin.version>3.2.1</maven-checkstyle-plugin.version>
     <jacoco.version>0.8.5</jacoco.version>
     <owasp.version>8.3.1</owasp.version>
     <plugin.maven-openapi-generator.version>5.2.1</plugin.maven-openapi-generator.version>
@@ -228,23 +230,35 @@
         <targetPath>META-INF</targetPath>
       </resource>
     </resources>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>${plugin.maven-checkstyle.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>com.puppycrawl.tools</groupId>
-              <artifactId>checkstyle</artifactId>
-              <version>${plugin.maven.checkstyle.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-      </plugins>
-    </pluginManagement>
     <plugins>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <groupId>org.apache.maven.plugins</groupId>
+        <version>${maven-checkstyle-plugin.version}</version>
+      </plugin>
+      <!--Git submodule update-->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.maven.plugin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>initialize</phase>
+            <id>workflow submodule update</id>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>git</executable>
+          <arguments>
+            <argument>submodule</argument>
+            <argument>update</argument>
+            <argument>--init</argument>
+          </arguments>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -360,7 +374,7 @@
             </goals>
             <configuration>
               <generatorName>spring</generatorName>
-              <inputSpec>${project.basedir}/api-spec/openapi-spec-v1.yaml</inputSpec>
+              <inputSpec>${project.basedir}/schemas/api-spec/ms-doc-submission-manager/openapi-spec-v1.yaml</inputSpec>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
               <apiPackage>${client.base.package.name}.openapi.v1.api</apiPackage>
