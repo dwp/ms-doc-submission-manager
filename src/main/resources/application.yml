@@ -1,6 +1,11 @@
 app_name: @project.artifactId@
 app_version: @project.version@
 
+spring:
+  data:
+    mongodb:
+      auto-index-creation: true
+
 ---
 
 spring:
