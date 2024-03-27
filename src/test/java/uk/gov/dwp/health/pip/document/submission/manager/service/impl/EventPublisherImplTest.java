@@ -10,8 +10,8 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.dwp.health.integration.message.events.EventManager;
 import uk.gov.dwp.health.integration.message.events.QueueEvent;
-import uk.gov.dwp.health.integration.message.events.QueueEventManager;
 import uk.gov.dwp.health.pip.document.submission.manager.config.properties.EventConfigProperties;
 import uk.gov.dwp.health.pip.document.submission.manager.event.PipDrsEvent;
 import uk.gov.dwp.health.pip.document.submission.manager.event.request.DrsUploadRequest;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class EventPublisherImplTest {
 
   @InjectMocks private EventPublisherImpl cut;
-  @Mock private QueueEventManager mockedQueueEventManager;
+  @Mock private EventManager mockedQueueEventManager;
   @Mock private EventConfigProperties props;
   @Mock private ObjectMapper objectMapper;
   @Captor private ArgumentCaptor<QueueEvent> captor;
@@ -40,14 +40,14 @@ class EventPublisherImplTest {
   void testEventManagerInvokedOnce() {
     DrsUploadRequest request = mock(DrsUploadRequest.class);
     cut.publishEvent(request);
-    verify(mockedQueueEventManager).send(any());
+    verify(mockedQueueEventManager).sendToQueue(any());
   }
 
   @Test
   void testEventManagerInvokedWithPayload() {
     DrsUploadRequest request = mock(DrsUploadRequest.class);
     cut.publishEvent(request);
-    verify(mockedQueueEventManager).send(captor.capture());
+    verify(mockedQueueEventManager).sendToQueue(captor.capture());
     assertThat(captor.getValue()).isInstanceOf(PipDrsEvent.class);
     verify(objectMapper).convertValue(any(DrsUploadRequest.class), any(TypeReference.class));
   }

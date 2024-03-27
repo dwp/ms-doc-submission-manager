@@ -68,12 +68,6 @@ class EventListenerServiceTest {
       when(props.getQueueName()).thenReturn("drs-response-queue");
       assertThat(cut.getQueueName()).isEqualTo("drs-response-queue");
     }
-
-    @Test
-    void testGetIncomingRoutingKey() {
-      when(props.getIncomingRoutingKey()).thenReturn("incoming-routing-key");
-      assertThat(cut.getRoutingKey()).isEqualTo("incoming-routing-key");
-    }
   }
 
   @Nested

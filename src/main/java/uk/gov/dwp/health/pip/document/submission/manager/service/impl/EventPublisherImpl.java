@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import uk.gov.dwp.health.integration.message.events.QueueEventManager;
+import uk.gov.dwp.health.integration.message.events.EventManager;
 import uk.gov.dwp.health.pip.document.submission.manager.config.properties.EventConfigProperties;
 import uk.gov.dwp.health.pip.document.submission.manager.event.PipDrsEvent;
 import uk.gov.dwp.health.pip.document.submission.manager.event.request.DrsUploadRequest;
@@ -18,13 +18,13 @@ import java.time.Instant;
 @Service
 public class EventPublisherImpl implements EventPublisherService<DrsUploadRequest> {
 
-  private final QueueEventManager queueEventManager;
+  private final EventManager queueEventManager;
   private final EventConfigProperties configProperties;
   private final ObjectMapper objectMapper;
 
   @Autowired
   public EventPublisherImpl(
-      QueueEventManager queueEventManager, EventConfigProperties props, ObjectMapper objectMapper) {
+      EventManager queueEventManager, EventConfigProperties props, ObjectMapper objectMapper) {
     this.queueEventManager = queueEventManager;
     this.configProperties = props;
     this.objectMapper = objectMapper;
@@ -33,7 +33,7 @@ public class EventPublisherImpl implements EventPublisherService<DrsUploadReques
   @Override
   public void publishEvent(DrsUploadRequest request) {
     try {
-      queueEventManager.send(
+      queueEventManager.sendToQueue(
           new PipDrsEvent(
               configProperties.getOutboundBatchUploadQueue(),
               objectMapper.convertValue(request, new TypeReference<>() {}),

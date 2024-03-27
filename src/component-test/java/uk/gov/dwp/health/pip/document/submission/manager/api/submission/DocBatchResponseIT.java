@@ -11,6 +11,7 @@ import com.amazonaws.services.cloudwatch.model.Metric;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClientBuilder;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,6 +41,8 @@ public class DocBatchResponseIT extends ApiTest {
     final AwsClientBuilder.EndpointConfiguration endpointConfiguration = getEndpointConfiguration();
     getAmazonCloudWatch(endpointConfiguration);
     getSqsClient(endpointConfiguration);
+    objectMapper.disable(DeserializationFeature
+        .FAIL_ON_UNKNOWN_PROPERTIES);
   }
 
   @Test

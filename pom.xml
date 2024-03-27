@@ -5,66 +5,88 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.7.18</version>
+    <version>3.2.3</version>
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-document-submission-manager</artifactId>
-  <version>2.4.0</version>
+  <version>2.5.0</version>
   <name>ms-document-submission-manager</name>
   <description>Micro service support claim submission</description>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <client.base.package.name>uk.gov.dwp.health.pip.document.submission.manager</client.base.package.name>
-    <spring-framework.version>5.3.27</spring-framework.version>
-    <dwp.encoded.log.version>2.2.3-112b45f6</dwp.encoded.log.version>
-    <dwp.message-broker.version>2.9.0-a2cbc08c</dwp.message-broker.version>
-    <dwp-meta-data-logger.version>2.0.0-56b86a2e</dwp-meta-data-logger.version>
-    <dwp-mongo-change-stream-starter.version>3.2.0-dd59aa6b</dwp-mongo-change-stream-starter.version>
+    <dwp.encoded.log.version>2.3.0-c5d6b343</dwp.encoded.log.version>
+    <dwp.message-broker.version>3.4.0-bd00860c</dwp.message-broker.version>
+    <dwp-meta-data-logger.version>2.0.0-f17eb705</dwp-meta-data-logger.version>
+    <dwp-mongo-change-stream-starter.version>4.2.0-359f3f54</dwp-mongo-change-stream-starter.version>
     <exec.maven.plugin.version>3.1.0</exec.maven.plugin.version>
-    <aws.s3.version>2.20.26</aws.s3.version>
+    <aws.s3.version>2.20.162</aws.s3.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
-    <springfox-swagger2.version>3.0.0</springfox-swagger2.version>
-    <amazon.sdk.version>1.12.432</amazon.sdk.version>
+    <jackson-bom.version>2.16.1</jackson-bom.version>
+    <amazon.sdk.version>1.12.543</amazon.sdk.version>
     <lidalia.version>1.2.0</lidalia.version>
-    <maven.compiler.version>3.8.1</maven.compiler.version>
+    <maven.compiler.version>3.11.0</maven.compiler.version>
     <maven-checkstyle-plugin.version>3.2.1</maven-checkstyle-plugin.version>
-    <jacoco.version>0.8.5</jacoco.version>
-    <owasp.version>8.3.1</owasp.version>
-    <plugin.maven-openapi-generator.version>5.2.1</plugin.maven-openapi-generator.version>
-    <plugin.spotbugs.version>4.2.2</plugin.spotbugs.version>
+    <jacoco.version>0.8.8</jacoco.version>
+    <owasp.version>8.4.0</owasp.version>
+    <plugin.maven-openapi-generator.version>6.6.0</plugin.maven-openapi-generator.version>
+    <plugin.spotbugs.version>4.7.3.0</plugin.spotbugs.version>
+    <spotbugs.version>4.7.3</spotbugs.version>
     <plugin.projectinfo.version>3.1.1</plugin.projectinfo.version>
-    <plugin.surefire.version>2.22.0</plugin.surefire.version>
+    <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
     <plugin.pmd.version>3.14.0</plugin.pmd.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
-    <plugin.pitest.version>1.6.4</plugin.pitest.version>
-    <plugin.pitest-junit5.version>0.14</plugin.pitest-junit5.version>
-    <plugin.maven.checkstyle.version>8.41.1</plugin.maven.checkstyle.version>
-    <plugin.maven-checkstyle.version>3.1.2</plugin.maven-checkstyle.version>
-    <flapdoodle.version>3.5.2</flapdoodle.version>
+    <plugin.pitest.version>1.9.2</plugin.pitest.version>
+    <plugin.pitest-junit5.version>1.1.0</plugin.pitest-junit5.version>
+    <plugin.maven.checkstyle.version>10.7.0</plugin.maven.checkstyle.version>
+    <plugin.maven-checkstyle.version>3.2.0</plugin.maven-checkstyle.version>
+    <flapdoodle.version>4.6.2</flapdoodle.version>
     <snakeyaml.version>2.0</snakeyaml.version>
-    <opentelemetry.version>1.32.0-alpha</opentelemetry.version>
+    <opentelemetry.version>1.34.1</opentelemetry.version>
 
-    <restassured.version>4.4.0</restassured.version>
-    <restassured.extent.report.plugin.version>1.4.0</restassured.extent.report.plugin.version>
+    <restassured.version>5.4.0</restassured.version>
+    <restassured.extent.report.plugin.version>2.1.2</restassured.extent.report.plugin.version>
     <qa-tools-properties.version>2.0.RC6</qa-tools-properties.version>
-    <allure.version>2.21.0</allure.version>
+    <allure.version>2.24.0</allure.version>
     <extentreport-allure-annotation.version>1.0.2</extentreport-allure-annotation.version>
+    <opentelemetry-aws-sdk.version>2.0.0-alpha</opentelemetry-aws-sdk.version>
+    <swagger-annotations.version>2.2.20</swagger-annotations.version>
+    <bc-fips.version>1.0.2.3</bc-fips.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk-bom</artifactId>
+        <version>${amazon.sdk.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>software.amazon.awssdk</groupId>
+        <artifactId>bom</artifactId>
+        <version>${aws.s3.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <dependencies>
     <dependency>
       <groupId>io.opentelemetry.instrumentation</groupId>
       <artifactId>opentelemetry-aws-sdk-2.2-autoconfigure</artifactId>
-      <version>${opentelemetry.version}</version>
+      <version>${opentelemetry-aws-sdk.version}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>uk.gov.dwp.health.logging</groupId>
-      <artifactId>dwp-meta-data-logger</artifactId>
+      <groupId>uk.gov.dwp.health.monitoring</groupId>
+      <artifactId>dwp-springboot-starter-meta-data-tracer</artifactId>
       <version>${dwp-meta-data-logger.version}</version>
     </dependency>
     <dependency>
@@ -119,11 +141,19 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-validation</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bc-fips</artifactId>
+      <version>${bc-fips.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>software.amazon.awssdk</groupId>
       <artifactId>s3</artifactId>
-      <version>${aws.s3.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>software.amazon.awssdk</groupId>
+      <artifactId>aws-query-protocol</artifactId>
     </dependency>
 
     <dependency>
@@ -137,9 +167,9 @@
       <version>${dwp.message-broker.version}</version>
     </dependency>
     <dependency>
-      <groupId>io.springfox</groupId>
-      <artifactId>springfox-swagger2</artifactId>
-      <version>${springfox-swagger2.version}</version>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger-annotations.version}</version>
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
@@ -163,7 +193,7 @@
     </dependency>
     <dependency>
       <groupId>de.flapdoodle.embed</groupId>
-      <artifactId>de.flapdoodle.embed.mongo</artifactId>
+      <artifactId>de.flapdoodle.embed.mongo.spring30x</artifactId>
       <version>${flapdoodle.version}</version>
       <scope>test</scope>
     </dependency>
@@ -395,6 +425,7 @@
                 <java8>true</java8>
                 <useBeanValidation>true</useBeanValidation>
                 <delegatePattern>true</delegatePattern>
+                <useJakartaEe>true</useJakartaEe>
               </configOptions>
             </configuration>
           </execution>
@@ -428,11 +459,11 @@
           <dependency>
             <groupId>com.github.spotbugs</groupId>
             <artifactId>spotbugs</artifactId>
-            <version>${plugin.spotbugs.version}</version>
+            <version>${spotbugs.version}</version>
           </dependency>
         </dependencies>
         <configuration>
-          <includeFilterFile>spotbugs/filter.xml</includeFilterFile>
+          <excludeFilterFile>spotbugs/filter.xml</excludeFilterFile>
         </configuration>
       </plugin>
     </plugins>

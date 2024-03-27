@@ -1,6 +1,8 @@
 package uk.gov.dwp.health.pip.document.submission.manager.api.submission;
 
+import io.restassured.config.RestAssuredConfig;
 import io.restassured.response.Response;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,7 @@ import uk.gov.dwp.health.pip.document.submission.manager.dto.responses.submissio
 import uk.gov.dwp.health.pip.document.submission.manager.dto.responses.submission.SubmissionResponse;
 import uk.gov.dwp.health.pip.document.submission.manager.utils.RandomStringUtil;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;

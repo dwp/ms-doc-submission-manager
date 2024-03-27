@@ -5,6 +5,7 @@ services:
     environment:
       SERVICES: s3, sns, sqs, kms, cloudwatch
       HOSTNAME_EXTERNAL: localstack
+      SQS_ENDPOINT_STRATEGY: off
     volumes:
       - ./config/localstack:/docker-entrypoint-initaws.d
     healthcheck:

@@ -7,7 +7,8 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @Generated
 @EnableMongoRepositories(basePackages = "uk.gov.dwp.health.pip.document.submission.manager")
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"uk.gov.dwp.health.pip.document.submission.manager",
+    "uk.gov.dwp.health.mongo.changestream.config.properties"})
 public class Application {
 
   public static void main(String[] args) {

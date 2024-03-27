@@ -18,7 +18,7 @@ import uk.gov.dwp.health.pip.document.submission.manager.exception.SubmissionNot
 import uk.gov.dwp.health.pip.document.submission.manager.exception.ValidationException;
 import uk.gov.dwp.health.pip.document.submission.manager.openapi.model.ErrorResponseObject;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 
 @Component
 @ControllerAdvice

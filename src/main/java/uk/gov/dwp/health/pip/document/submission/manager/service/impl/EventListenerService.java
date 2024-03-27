@@ -35,11 +35,6 @@ public class EventListenerService implements HealthMessageConsumer<Map<String, O
   }
 
   @Override
-  public String getRoutingKey() {
-    return configProperties.getIncomingRoutingKey();
-  }
-
-  @Override
   public void handleMessage(MessageHeaders messageHeaders, final Map<String, Object> payload) {
     final DrsUploadResponse drsUploadResponse =
         objectMapper.convertValue(payload, DrsUploadResponse.class);

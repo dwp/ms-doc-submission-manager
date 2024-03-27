@@ -11,6 +11,8 @@ import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.slf4j.LoggerFactory;
 
+import uk.gov.dwp.health.pip.document.submission.manager.config.RestAssuredConfiguration;
+
 import static io.restassured.RestAssured.given;
 
 public class ApiTest {
@@ -29,6 +31,7 @@ public class ApiTest {
             .setContentType(ContentType.JSON)
             .addFilter(new AllureRestAssured())
             .build();
+    RestAssuredConfiguration.configureObjectMapper();
   }
 
   private static void reduceLoggerOutput() {

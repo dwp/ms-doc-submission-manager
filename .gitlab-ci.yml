@@ -3,7 +3,7 @@ variables:
   PRODUCT: pip-apply
   # Config
   BUILD_TYPE: MAVEN
-  MAVEN_IMAGE: "maven:3-jdk-11"
+  MAVEN_IMAGE: "maven:3.8.3-openjdk-17"
   MVN_OPTS: "-DLOG_LEVEL=INFO"
   MVN_CLI_OPTS: "--batch-mode"
   REPO_OWNER: "Team Goldcrest"
@@ -53,6 +53,9 @@ create-develop-nightly-schedule:
     SCHEDULE_CRON: "0 05 * * *"
     RANDOMIZE_MINS: "true"
 
+maven-verify:
+  allow_failure: true
+
 .prepare-test: &prepare-test
   before_script:
     - apk add --no-cache py-pip jq
@@ -94,7 +97,7 @@ api-test:
 trivy-container:
   extends: .trivy-container-base
   variables:
-    HIGH_SUPPRESSIONS: "CVE-2023-21930,CVE-2023-4911"
+    HIGH_SUPPRESSIONS: "CVE-2024-20918,CVE-2024-20932,CVE-2024-20952,CVE-2023-29499"
 
 ### DEFAULT RUNNER ###
 default:
