@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.3</version>
-    <relativePath/> <!-- lookup parent from repository -->
+    <version>3.2.6</version>
+    <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-document-submission-manager</artifactId>
-  <version>2.5.0</version>
+  <version>2.7.0</version>
   <name>ms-document-submission-manager</name>
   <description>Micro service support claim submission</description>
 
@@ -55,7 +56,7 @@
     <extentreport-allure-annotation.version>1.0.2</extentreport-allure-annotation.version>
     <opentelemetry-aws-sdk.version>2.0.0-alpha</opentelemetry-aws-sdk.version>
     <swagger-annotations.version>2.2.20</swagger-annotations.version>
-    <bc-fips.version>1.0.2.3</bc-fips.version>
+    <bc-fips.version>1.0.2.5</bc-fips.version>
   </properties>
 
   <dependencyManagement>
@@ -273,7 +274,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <version>${maven-checkstyle-plugin.version}</version>
       </plugin>
-      <!--Git submodule update-->
+      <!--Git
+      submodule update-->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
@@ -314,7 +316,8 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <version>${plugin.surefire.version}</version>
         <configuration>
-          <!--suppress UnresolvedMavenProperty -->
+          <!--suppress
+          UnresolvedMavenProperty -->
           <argLine>${jacocoArgLine}-Xmx256m</argLine>
         </configuration>
       </plugin>
@@ -326,6 +329,14 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>repackage</id>
+            <configuration>
+              <loaderImplementation>CLASSIC</loaderImplementation>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -411,7 +422,8 @@
             </goals>
             <configuration>
               <generatorName>spring</generatorName>
-              <inputSpec>${project.basedir}/schemas/api-spec/ms-doc-submission-manager/openapi-spec-v1.yaml</inputSpec>
+              <inputSpec>
+                ${project.basedir}/schemas/api-spec/ms-doc-submission-manager/openapi-spec-v1.yaml</inputSpec>
               <generateSupportingFiles>true</generateSupportingFiles>
               <modelPackage>${client.base.package.name}.openapi.model</modelPackage>
               <apiPackage>${client.base.package.name}.openapi.v1.api</apiPackage>
@@ -446,9 +458,15 @@
           <targetClasses>
             <param>uk.gov.dwp.health.pip.document.submission.manager.*</param>
           </targetClasses>
+          <excludedClasses>
+            <param>uk.gov.dwp.health.pip.document.submission.manager.repository.*</param>
+          </excludedClasses>
           <targetTests>
             <param>uk.gov.dwp.health.pip.document.submission.manager.*</param>
           </targetTests>
+          <excludedTestClasses>
+            <param>uk.gov.dwp.health.pip.document.submission.manager.repository.*</param>
+          </excludedTestClasses>
         </configuration>
       </plugin>
       <plugin>
@@ -501,7 +519,8 @@
             <artifactId>build-helper-maven-plugin</artifactId>
             <version>${build-helper-maven-plugin.version}</version>
             <executions>
-              <!--Add multiple test sources/resources -->
+              <!--Add
+              multiple test sources/resources -->
               <execution>
                 <id>add-integration-test-source</id>
                 <goals>
