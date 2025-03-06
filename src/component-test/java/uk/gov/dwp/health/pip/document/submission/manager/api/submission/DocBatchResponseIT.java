@@ -120,7 +120,7 @@ public class DocBatchResponseIT extends ApiTest {
 
   private static AwsClientBuilder.EndpointConfiguration getEndpointConfiguration() {
     final AwsClientBuilder.EndpointConfiguration endpointConfiguration = new AwsClientBuilder.EndpointConfiguration(
-        "http://" + HOST_NAME + ":4566", "us-east-1"
+        "http://" + HOST_NAME + ":4566", "eu-west-2"
     );
     return endpointConfiguration;
   }
