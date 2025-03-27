@@ -6,12 +6,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.4.3</version>
+    <version>3.4.4</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>uk.gov.dwp.health</groupId>
   <artifactId>ms-document-submission-manager</artifactId>
-  <version>2.9.0</version>
+  <version>2.9.2</version>
   <name>ms-document-submission-manager</name>
   <description>Micro service support claim submission</description>
 
@@ -25,7 +25,7 @@
     <dwp-meta-data-logger.version>3.0.0-ca1c3364</dwp-meta-data-logger.version>
     <dwp-mongo-change-stream-starter.version>4.2.0-25280f8d</dwp-mongo-change-stream-starter.version>
     <exec.maven.plugin.version>3.5.0</exec.maven.plugin.version>
-    <aws.s3.version>2.30.31</aws.s3.version>
+    <aws.s3.version>2.31.6</aws.s3.version>
     <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     <jackson-bom.version>2.18.2</jackson-bom.version>
     <amazon.sdk.version>1.12.782</amazon.sdk.version>
@@ -35,19 +35,19 @@
     <jacoco.version>0.8.12</jacoco.version>
     <owasp.version>12.1.0</owasp.version>
     <plugin.maven-openapi-generator.version>7.12.0</plugin.maven-openapi-generator.version>
-    <plugin.spotbugs.version>4.9.1.0</plugin.spotbugs.version>
-    <spotbugs.version>4.9.2</spotbugs.version>
+    <plugin.spotbugs.version>4.9.3.0</plugin.spotbugs.version>
+    <spotbugs.version>4.9.3</spotbugs.version>
     <plugin.projectinfo.version>3.9.0</plugin.projectinfo.version>
     <plugin.surefire.version>3.5.2</plugin.surefire.version>
     <plugin.pmd.version>3.26.0</plugin.pmd.version>
     <plugin.jxr.version>3.6.0</plugin.jxr.version>
-    <plugin.pitest.version>1.18.2</plugin.pitest.version>
+    <plugin.pitest.version>1.19.0</plugin.pitest.version>
     <plugin.pitest-junit5.version>1.2.2</plugin.pitest-junit5.version>
     <plugin.maven.checkstyle.version>10.7.0</plugin.maven.checkstyle.version>
     <plugin.maven-checkstyle.version>3.2.0</plugin.maven-checkstyle.version>
     <flapdoodle.version>4.11.0</flapdoodle.version>
     <snakeyaml.version>2.0</snakeyaml.version>
-    <spring-integration-core.version>6.4.2</spring-integration-core.version>
+    <spring-integration-core.version>6.4.3</spring-integration-core.version>
     <netty.version>4.1.118.Final</netty.version>
 
     <restassured.version>5.5.1</restassured.version>
@@ -56,7 +56,7 @@
     <allure.version>2.29.1</allure.version>
     <extentreport-allure-annotation.version>1.0.2</extentreport-allure-annotation.version>
     <opentelemetry-aws-sdk.version>2.13.0-alpha</opentelemetry-aws-sdk.version>
-    <swagger-annotations.version>2.2.28</swagger-annotations.version>
+    <swagger-annotations.version>2.2.29</swagger-annotations.version>
     <bc-fips.version>2.1.0</bc-fips.version>
   </properties>
 

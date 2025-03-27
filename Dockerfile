@@ -1,4 +1,4 @@
-FROM gcr.io/distroless/java17@sha256:7cf2e8e0b219ac40f96643fbd9fc068c75c5e3ea7396584030250f9d1581ef80
+FROM gcr.io/distroless/java17-debian12@sha256:6d25f6a8d826f7472f18dc32a9c439d2f245713df4029e5ecec19378eaaf952c
 COPY target/ms-document-submission-manager-*.jar /app.jar
 
 COPY --from=pik94420.live.dynatrace.com/linux/oneagent-codemodules:java / /

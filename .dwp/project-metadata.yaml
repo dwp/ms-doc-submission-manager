@@ -6,7 +6,7 @@ project:
   - project_id: 28977642
     component_name: ms-document-submission-manager
 
-    version: 2.9.0
+    version: 2.9.2
 
     last_verified:
       date: "2025-02-26"
